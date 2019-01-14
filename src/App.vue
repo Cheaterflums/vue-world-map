@@ -1,12 +1,12 @@
 <template>
 <div class="vue-world-map">
-  <Map />
+  <Worldmap />
 </div>
 </template>
 
 <script>
 import chroma from 'chroma-js';
-import Map from './Map';
+import Worldmap from './Map.vue';
 import {
   getDynamicMapCss,
   getBaseCss,
@@ -15,11 +15,24 @@ import {
 
 
 export default {
-  components: { Map },
+  components: { Worldmap },
   watch: {
-    countryData() {
-      this.renderMapCSS();
+      countryData: {
+          handler(val,old){
+              console.log('change')
+              this.renderMapCSS();
+          },
+          deep: true
+      }
+      /*
+    countryData: {
+        handler:()=>{
+            console.log('change')
+            this.renderMapCSS();
+        },deep:true
+
     },
+    */
   },
   props: {
     lowColor: {
@@ -54,11 +67,18 @@ export default {
       const baseCss = getBaseCss(this.$props);
       const dynamicMapCss = getDynamicMapCss(this.$props.countryData, this.chromaScale);
       this.$data.node.innerHTML = getCombinedCssString(baseCss, dynamicMapCss);
+      this.$data.node.id = 'vueWorldMap'
     },
   },
   mounted() {
-    document.body.appendChild(this.$data.node);
-    this.renderMapCSS();
+      this.renderMapCSS();
+      if(document.getElementById('vueWorldMap')){
+          document.getElementById('vueWorldMap').innerHTML=this.$data.node.innerHTML;
+      }else{
+          document.body.appendChild(this.$data.node);
+      }
+
+
   },
 };
 </script>
